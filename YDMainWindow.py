@@ -364,6 +364,6 @@ class YDMainWindow(QMainWindow):
     def showErrorMsg(self, msg):
         QMessageBox.warning(self, "Error!", msg)
 
-    @pyqtSlot(int, int)
-    def downloadProgressChanged(self, a, b):
-        self.progressLabel.setText(f"{a/1024:,.2f} KB / {b/1024:,.2f} KB")
+    @pyqtSlot(int, int, int)
+    def downloadProgressChanged(self, a, b, r):
+        self.progressLabel.setText(f"{a/1024:,.2f} KB / {b/1024:,.2f} KB ({r/1024:,} kb/s)")

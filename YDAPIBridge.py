@@ -18,7 +18,7 @@ class YDAPIBridge(QObject):
     # progress bar signals
     progressMaxChanged = pyqtSignal(int)
     progressChanged = pyqtSignal(int)
-    downloadProgressChanged = pyqtSignal(int, int)
+    downloadProgressChanged = pyqtSignal(int, int, int)
 
     # download signals
     downloadFailed = pyqtSignal(str)
@@ -43,6 +43,9 @@ class YDAPIBridge(QObject):
 
         # are we currently processing any requests?
         self.active = False
+
+        # last progress (for speed calculation)
+        self.lastProgress = 0
 
         # connect our download finished signal
         self.networkManager.finished.connect(self.downloadFinished)
@@ -92,7 +95,10 @@ class YDAPIBridge(QObject):
     def downloadProgress(self, value, max_):
         self.progressMaxChanged.emit(max_)
         self.progressChanged.emit(value)
-        self.downloadProgressChanged.emit(value, max_)
+        self.downloadProgressChanged.emit(value, max_, int(abs(value - self.lastProgress)))
+
+        # store our last progress
+        self.lastProgress = value
 
     # send a network request (with an inbuilt kill-switch)
     def sendRequest(self, url, type_: YDAPIRequestType):
